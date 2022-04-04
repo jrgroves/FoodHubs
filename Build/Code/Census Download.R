@@ -1,6 +1,7 @@
 library(tidycensus)
 library(tidyverse)
 library(sf)
+library(readxl)
 
 #Functions
 
@@ -50,8 +51,26 @@ for(i in fips){
 State<-rbind(illinoismap_st,iowamap_st,michiganmap_st,wisconsinmap_st,missourimap_st,
               indianamap_st,minnesotamap_st)
 
-County<-rbind(illinoismap_co,iowamap_st,michiganmap_co,wisconsinmap_co,missourimap_co,
+County<-rbind(illinoismap_co,iowamap_co,michiganmap_co,wisconsinmap_co,missourimap_co,
               indianamap_co,minnesotamap_co)
+
+
+
+farms<-read_excel("./Build/Input/Responses.xlsx", sheet = "Farms")
+
+farms<-farms %>%
+  filter(!is.na(Lat))
+
+farms <- st_as_sf(farms, coords = c("Lon", "Lat"),crs = 4326, agr = "constant")
+
+
+hubs<-read_excel("./Build/Input/Responses.xlsx", sheet = "Hubs")
+
+hubs<-hubs %>%
+  filter(!is.na(Lat))
+
+hubs <- st_as_sf(hubs, coords = c("Lon", "Lat"),crs = 4326, agr = "constant")
+
 
 map<-ggplot()+
   geom_sf(
@@ -63,7 +82,12 @@ map<-ggplot()+
     data = State,
     fill=NA, colour="black",
     size=1,
-    inherit.aes=FALSE)
-
-
-
+    inherit.aes=FALSE)+
+  geom_sf(data = farms, 
+          size = 1, 
+          shape = 23, 
+          fill = "darkred")+
+  geom_sf(data = hubs, 
+          size = 4, 
+          shape = 10, 
+          fill = "navy") 
