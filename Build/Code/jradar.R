@@ -1,56 +1,56 @@
-#Functions####
+jradar<-function(plot.data){
 
-CalculateAxisPath<-function (var.names, min, max) 
-{
-  n.vars <- length(var.names)
-  angles <- seq(from = 0, to = 2 * pi, by = (2 * pi)/n.vars)
-  min.x <- min * sin(angles)
-  min.y <- min * cos(angles)
-  max.x <- max * sin(angles)
-  max.y <- max * cos(angles)
-  axisData <- NULL
-  for (i in 1:n.vars) {
-    a <- c(i, min.x[i], min.y[i])
-    b <- c(i, max.x[i], max.y[i])
-    axisData <- rbind(axisData, a, b)
-  }
-  colnames(axisData) <- c("axis.no", "x", "y")
-  rownames(axisData) <- seq(1:nrow(axisData))
-  as.data.frame(axisData)
-}
-
-CalculateGroupPath<-function (df) 
-{
-  path <- df[, 1]
-  angles <- seq(from = 0, to = 2 * pi, by = (2 * pi)/(ncol(df) - 
-                                                        1))
-  graphData <- data.frame(seg = "", x = 0, y = 0)
-  graphData <- graphData[-1, ]
-  for (i in levels(path)) {
-    pathData <- subset(df, df[, 1] == i)
-    for (j in c(2:ncol(df))) {
-      graphData <- rbind(graphData, 
-                         data.frame(group = i,
-                                    x = pathData[, j] * sin(angles[j - 1]), 
-                                    y = pathData[, j] * cos(angles[j - 1])))
+    CalculateAxisPath<-function (var.names, min, max) 
+    {
+      n.vars <- length(var.names)
+      angles <- seq(from = 0, to = 2 * pi, by = (2 * pi)/n.vars)
+      min.x <- min * sin(angles)
+      min.y <- min * cos(angles)
+      max.x <- max * sin(angles)
+      max.y <- max * cos(angles)
+      axisData <- NULL
+      for (i in 1:n.vars) {
+        a <- c(i, min.x[i], min.y[i])
+        b <- c(i, max.x[i], max.y[i])
+        axisData <- rbind(axisData, a, b)
+      }
+      colnames(axisData) <- c("axis.no", "x", "y")
+      rownames(axisData) <- seq(1:nrow(axisData))
+      as.data.frame(axisData)
     }
-    graphData <- rbind(graphData, 
-                       data.frame(group = i, 
-                                  x = pathData[,2] * sin(angles[1]), 
-                                  y = pathData[, 2] * cos(angles[1])))
-  }
-  colnames(graphData)[1] <- colnames(df)[1]
-  graphData$group <- factor(graphData$group, levels = levels(df[,1]))
-  graphData
-}
 
-funcCircleCoords<-function (center = c(0, 0), r = 1, npoints = 100) 
-{
-  tt <- seq(0, 2 * pi, length.out = npoints)
-  xx <- center[1] + r * cos(tt)
-  yy <- center[2] + r * sin(tt)
-  return(data.frame(x = xx, y = yy))
-}
+      CalculateGroupPath<-function (df) 
+      {
+        path <- df[, 1]
+        angles <- seq(from = 0, to = 2 * pi, by = (2 * pi)/(ncol(df) - 
+                                                              1))
+        graphData <- data.frame(seg = "", x = 0, y = 0)
+        graphData <- graphData[-1, ]
+        for (i in levels(path)) {
+          pathData <- subset(df, df[, 1] == i)
+          for (j in c(2:ncol(df))) {
+            graphData <- rbind(graphData, 
+                               data.frame(group = i,
+                                          x = pathData[, j] * sin(angles[j - 1]), 
+                                          y = pathData[, j] * cos(angles[j - 1])))
+          }
+          graphData <- rbind(graphData, 
+                             data.frame(group = i, 
+                                        x = pathData[,2] * sin(angles[1]), 
+                                        y = pathData[, 2] * cos(angles[1])))
+        }
+        colnames(graphData)[1] <- colnames(df)[1]
+        graphData$group <- factor(graphData$group, levels = levels(df[,1]))
+        graphData
+      }
+      
+      funcCircleCoords<-function (center = c(0, 0), r = 1, npoints = 100) 
+      {
+        tt <- seq(0, 2 * pi, length.out = npoints)
+        xx <- center[1] + r * cos(tt)
+        yy <- center[2] + r * sin(tt)
+        return(data.frame(x = xx, y = yy))
+      }
 
 #Set Parameter####
 
@@ -68,14 +68,14 @@ plot.extent.y.sf = 1.2
 x.centre.range = 0.02 * (grid.max - centre.y) 
 label.centre.y = FALSE 
 grid.line.width = 0.5 
-gridline.min.linetype = "longdash" 
+gridline.min.linetype = "solid" 
 gridline.mid1.linetype = "longdash" 
 gridline.mid2.linetype = "longdash" 
-gridline.max.linetype = "longdash" 
+gridline.max.linetype = "solid" 
 gridline.min.colour = "grey" 
 gridline.mid1.colour = "#007A87" 
 gridline.mid2.colour = "#007A87" 
-gridline.max.colour = "grey" 
+gridline.max.colour = "black" 
 grid.label.size = 6 
 gridline.label.offset = -0.1 * (grid.max - centre.y) 
 label.gridline.min = TRUE
@@ -226,3 +226,5 @@ plot.title = ""
                      geom_point(data = group$path, 
                                 aes(x = x, y = y, group = group, colour = group), 
                                 size = group.point.size)
+return(base)
+}

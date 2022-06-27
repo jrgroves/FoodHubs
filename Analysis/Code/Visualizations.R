@@ -4,12 +4,10 @@
 
 rm(list=ls())
 
-library(ggplot2)
 library(ggradar)
-  suppressPackageStartupMessages(library(tidyverse))
-library(scales)
+suppressPackageStartupMessages(library(tidyverse))
 library(readxl)
-library(cowplot)
+
 
 
 #Read in Data####
@@ -34,78 +32,78 @@ f.fp <- focus[[2]] %>%
 f.nfp <- focus[[3]] %>%
   select(Type,Economic, Social, Environmental, Community)
 
-
-labs<-c("Economic", "Social","Environmental","Community")
+source("./Build/Code/jradar.R")
 
 f.core<-rbind(f.coop, f.fp, f.nfp)
 
-f.core <- f.core %>%
-  mutate(across(2:5, ~ .x / 3))
+mission.coop<-jradar(f.coop)
+mission.fp<-jradar(f.fp)
+mission.nfp<-jradar(f.nfp)
 
 
-r = √ ( x2 + y2 )
-θ = tan-1 ( y / x )
+#Creates the Radar Plots for Sales Points#####
+f.coop <- focus[[1]] %>%
+  select(Hub, Consumers, Resturants, Prvt_Inst, Pub_Inst, Wholesale) %>%
+  mutate(across(Consumers:Wholesale, ~.x/100))
+
+f.fp <- focus[[2]] %>%
+  select(Hub, Consumers, Resturants, Prvt_Inst, Pub_Inst, Wholesale) %>%
+  mutate(across(Consumers:Wholesale, ~.x/100))
 
 
+f.nfp <- focus[[3]] %>%
+  select(Hub, Consumers, Resturants, Prvt_Inst, Pub_Inst, Wholesale) %>%
+  mutate(across(Consumers:Wholesale, ~.x/100))
 
-ggradar(f.core, 
-        rescale(FALSE),
-        grid.max = 3,
-        ylim(0,3))
+sales.coop<-ggradar(f.coop)
+sales.fp<-jradar(f.fp)
+sales.nfp<-jradar(f.nfp)
 
-ggradar(f.core,
-        
-        plot.legend=TRUE, 
-        legend.title = "Type",
-        legend.position = "left",
-        axis.label.size = 4, 
-        grid.label.size = 4, 
-        legend.text.size = 10,
-        axis.labels = labs) +
-  theme(plot.title = element_text(size=14),
-        legend.title = element_text(size=14))+
-  labs(title="")
 
-ggradar(f.coop,
-              values.radar = c("0","1", "2", "3"),
-        grid.min = 0,
-        grid.mid = 2,
-        grid.max = 4,
-              plot.legend=FALSE, 
-              axis.label.size = 4, 
-              grid.label.size = 4, 
-              legend.text.size = 10,
-              axis.labels = labs) +
-  theme(plot.title = element_text(size=14),
-        legend.title = element_text(size=14))+
-  labs(title="How would you rate the direct relevance of the following to the mission of your food hub?
-LLC's")
+#Creates the Radar Plots for Farm Scale#####
+f.coop <- focus[[1]] %>%
+  select(Hub, Small, Medium, Large) %>%
+  mutate(across(Small:Large, ~.x/100))
 
-ggradar(f.fp,
-                values.radar = c("0","1", "2", "3"),
-        grid.min = 0,
-        grid.mid = 2,
-        grid.max = 4,
-                plot.legend=FALSE, 
-                axis.label.size = 4, 
-                grid.label.size = 4, 
-                legend.text.size = 10,
-                axis.labels = labs) +
-  theme(plot.title = element_text(size=14),
-        legend.title = element_text(size=14))+
-  labs(title="")
+f.fp <- focus[[2]] %>%
+  select(Hub, Small, Medium, Large) %>%
+  mutate(across(Small:Large, ~.x/100))
 
-ggradar(f.nfp,
-                values.radar = c("0", "1", "2", "3"),
-                grid.min = 0,
-                grid.mid = 2,
-                grid.max = 4,
-                plot.legend=FALSE,
-                axis.label.size = 4, 
-                grid.label.size = 4, 
-                legend.text.size = 10,
-                axis.labels = labs) +
-  theme(plot.title = element_text(size=14),
-        legend.title = element_text(size=14))+
-  labs(title="")
+
+f.nfp <- focus[[3]] %>%
+  select(Hub, Small, Medium, Large) %>%
+  mutate(across(Small:Large, ~.x/100))
+
+farm.coop<-ggradar(f.coop)
+farm.fp<-jradar(f.fp)
+farm.nfp<-jradar(f.nfp)
+
+#Creates the Radar Plots for Products#####
+f.coop <- focus[[1]] %>%
+  select(Hub, Meat:Value_Add) %>%
+  mutate(across(Meat:Value_Add, ~.x/100))
+
+f.fp <- focus[[2]] %>%
+  select(Hub, Meat:Value_Add) %>%
+  mutate(across(Meat:Value_Add, ~.x/100))
+
+
+f.nfp <- focus[[3]] %>%
+  select(Hub, Meat:Value_Add) %>%
+  mutate(across(Meat:Value_Add, ~.x/100))
+
+product.coop<-ggradar(f.coop)
+product.fp<-jradar(f.fp)
+product.nfp<-jradar(f.nfp)
+
+#Creates the Radar Plots for Infrastructure#####
+f.coop <- focus[[1]] %>%
+  select(Hub, Warehouse:Rental)
+  
+f.fp <- focus[[2]] %>%
+  select(Hub, Warehouse:Rental)
+
+f.nfp <- focus[[3]] %>%
+  select(Hub, Meat:Value_Add) 
+
 
