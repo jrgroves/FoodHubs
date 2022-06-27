@@ -14,7 +14,9 @@ library(cowplot)
 
 #Read in Data####
 
-load(file="./Build/OUtput/core.RData")
+  
+core<-read_excel("./Data/Analysis_Food Hubs.xlsx", sheet = "Data")
+
 
 #Splits the hubs dataframe into dfs by type
 focus<-core %>%
@@ -37,11 +39,22 @@ labs<-c("Economic", "Social","Environmental","Community")
 
 f.core<-rbind(f.coop, f.fp, f.nfp)
 
+f.core <- f.core %>%
+  mutate(across(2:5, ~ .x / 3))
+
+
+r = √ ( x2 + y2 )
+θ = tan-1 ( y / x )
+
+
+
+ggradar(f.core, 
+        rescale(FALSE),
+        grid.max = 3,
+        ylim(0,3))
+
 ggradar(f.core,
-        values.radar = c("0","1", "2", "3"),
-        grid.min = 0,
-        grid.mid = 2,
-        grid.max = 4,
+        
         plot.legend=TRUE, 
         legend.title = "Type",
         legend.position = "left",
