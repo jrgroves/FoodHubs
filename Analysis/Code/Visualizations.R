@@ -97,6 +97,8 @@ product.fp<-jradar(f.fp)
 product.nfp<-jradar(f.nfp)
 
 #Creates the Radar Plots for Infrastructure#####
+
+
 f.coop <- focus[[1]] %>%
   select(Hub, Warehouse:Rental)
   
