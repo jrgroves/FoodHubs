@@ -36,9 +36,9 @@ source("./Build/Code/jradar.R")
 
 f.core<-rbind(f.coop, f.fp, f.nfp)
 
-mission.coop<-jradar(f.coop)
-mission.fp<-jradar(f.fp)
-mission.nfp<-jradar(f.nfp)
+mission.coop<-ggsave("miss_coop.png", jradar(f.coop), device = "png", path="./Analysis/Output/", dpi = 600)
+mission.fp<-ggsave("miss_fp.png", jradar(f.fp), device = "png", path="./Analysis/Output/", dpi = 600)
+mission.nfp<-ggsave("miss_nfp.png", jradar(f.nfp), device = "png", path="./Analysis/Output/", dpi = 600)
 
 
 #Creates the Radar Plots for Sales Points#####
@@ -55,9 +55,9 @@ f.nfp <- focus[[3]] %>%
   select(Hub, Consumers, Resturants, Prvt_Inst, Pub_Inst, Wholesale) %>%
   mutate(across(Consumers:Wholesale, ~.x/100))
 
-sales.coop<-ggradar(f.coop)
-sales.fp<-jradar(f.fp)
-sales.nfp<-jradar(f.nfp)
+sales.coop<-ggsave("sales_coop.png", ggradar(f.coop), device = "png", path="./Analysis/Output/", dpi = 600)
+sales.fp<-ggsave("sales_fp.png", ggradar(f.fp), device = "png", path="./Analysis/Output/", dpi = 600)
+sales.nfp<-ggsave("sales_np.png", ggradar(f.nfp), device = "png", path="./Analysis/Output/", dpi = 600)
 
 
 #Creates the Radar Plots for Farm Scale#####
@@ -74,9 +74,9 @@ f.nfp <- focus[[3]] %>%
   select(Hub, Small, Medium, Large) %>%
   mutate(across(Small:Large, ~.x/100))
 
-farm.coop<-ggradar(f.coop)
-farm.fp<-jradar(f.fp)
-farm.nfp<-jradar(f.nfp)
+farm.coop<-ggsave("farm_coop.png", ggradar(f.coop), device = "png", path="./Analysis/Output/", dpi = 600)
+farm.fp<-ggsave("farm_fp.png", ggradar(f.fp), device = "png", path="./Analysis/Output/", dpi = 600)
+farm.nfp<-ggsave("farm_nfp.png", ggradar(f.nfp), device = "png", path="./Analysis/Output/", dpi = 600)
 
 #Creates the Radar Plots for Products#####
 f.coop <- focus[[1]] %>%
@@ -92,9 +92,9 @@ f.nfp <- focus[[3]] %>%
   select(Hub, Meat:Value_Add) %>%
   mutate(across(Meat:Value_Add, ~.x/100))
 
-product.coop<-ggradar(f.coop)
-product.fp<-jradar(f.fp)
-product.nfp<-jradar(f.nfp)
+product.coop<-ggsave("product_coop.png", ggradar(f.coop), device = "png", path="./Analysis/Output/", dpi = 600)
+product.fp<-ggsave("product_fp.png", ggradar(f.fp), device = "png", path="./Analysis/Output/", dpi = 600)
+product.nfp<-ggsave("product_nfp.png", ggradar(f.nfp), device = "png", path="./Analysis/Output/", dpi = 600)
 
 #Creates the Radar Plots for Infrastructure#####
 
