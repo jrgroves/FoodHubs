@@ -66,9 +66,7 @@ infra.1<-ggplot(data=core, aes(x=LegStat , y=Sup_Per), fill=LegStat)+
   geom_vline(aes(xintercept = 3.5))
 
 infra.2<-ggplot(data=subset(core, LegStat=="coop"), aes(x=HubID))+
-  geom_bar(stat = "count")
-
-+
+  geom_bar(stat = "count") +
   geom_bar(aes(y=Trucks), stat = "bin") 
 
 
