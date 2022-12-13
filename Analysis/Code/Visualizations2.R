@@ -29,7 +29,7 @@ core<-core %>%
 legal<-core %>%
   select(HubID, leg)
 pmix<-core %>%
-  select(HubID, Product_Mix)
+  select(HubID, Product_Mix, Scale_Color)
 
 st_miss <- core %>%
   select(HubID, starts_with("Stated"))
@@ -62,14 +62,14 @@ core.org2<-core.org %>%
   inner_join(y=pmix, by="HubID") %>%
   inner_join(y=st_miss, by="HubID")
 
-org.2<-ggplot(core.org2, aes(x = HubID, y = Var2)) + 
-  geom_raster(aes(fill=value)) + 
+org.2<-ggplot(data=core.org2, aes(x = HubID, y = Var2)) + 
+  geom_raster(aes(fill=value*Stated_Social)) + 
   geom_hline(yintercept = c(0.5, 1.5, 2.5, 3.5, 4.5), size = 1)+
   geom_vline(xintercept = c(0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5), size = 1)+
   facet_wrap(~ leg, scale="free_x")+
-  scale_fill_gradientn(colors=c("White","#9999FF"),
-                       limits = c(0, 1),
-                       breaks = c(0,1), labels=format(c(0,1)),
+  scale_fill_gradientn(colors=c("White","blue","yellow","red"),
+                       limits = c(0, 3),
+                       breaks = c(0,1,2,3), labels=format(c(0,1,2,3)),
                        name = "Social Mission")+
   labs(x="Food Hubs", y="Decision Makers", title="Food Hub Decision Makers")+
   theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
@@ -85,11 +85,15 @@ org.2<-ggplot(core.org2, aes(x = HubID, y = Var2)) +
                    legend.text = element_text(size=22),
                    strip.text.x = element_text(size = 20))
 
-org.3<-ggplot(data=filter(core.org2, value!=0), aes(x = HubID, y = Var2)) + 
-              geom_raster(aes(fill=Product_Mix)) + 
+cols <- c("missing" = "white", "narrow" = "blue", "variety" = "darkgreen", "full-spectrum" = "orange")
+core.org2$pm<-ifelse(core.org2$value==0, "missing", core.org2$Product_Mix)
+
+org.3<-ggplot(data=core.org2, aes(x = HubID, y = Var2)) + 
+              geom_raster(aes(fill=pm)) + 
               geom_hline(yintercept = c(0.5, 1.5, 2.5, 3.5, 4.5), size = 1)+
               geom_vline(xintercept = c(0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5), size = 1)+
               facet_wrap(~ leg, scale="free_x")+
+              scale_fill_manual(values = cols)+
               labs(x="Food Hubs", y="Decision Makers", title="Food Hub Decision Makers",
                    fill = "Product Mixture")+
               theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
@@ -105,21 +109,25 @@ org.3<-ggplot(data=filter(core.org2, value!=0), aes(x = HubID, y = Var2)) +
                                legend.text = element_text(size=22),
                                strip.text.x = element_text(size = 20))
 
-org.4<-ggplot(data=filter(core.org2, value!=0), aes(x = HubID, y = Var2)) + 
-        geom_raster(aes(fill=Stated_Environment)) + 
+core.org2$pm<-ifelse(core.org2$value==0, "#FFFFFF", core.org2$Scale_Color)
+
+org.4<-ggplot(data=core.org2, aes(x = HubID, y = Var2)) + 
+        geom_raster(aes(fill=pm)) + 
         geom_hline(yintercept = c(0.5, 1.5, 2.5, 3.5, 4.5), size = 1)+
         geom_vline(xintercept = c(0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5), size = 1)+
         facet_wrap(~ leg, scale="free_x")+
+        scale_fill_identity(guide = "none")+
         labs(x="Food Hubs", y="Decision Makers", title="Food Hub Decision Makers",
-             fill = "Importance of Environmental Mission")+
+             subtitle = "Color Indicate Farm Source Mixture" )+
         theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
                          axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
                          axis.title.y=element_text(size = 26, face = "bold"),
                          axis.text.y=element_text(size=26),
                          plot.title=element_text(size=28, face="bold"),
+                         plot.subtitle = element_text(size = 20),
                          axis.line = element_blank(),
                          panel.grid = element_blank(),
-                         legend.position = "bottom",
+                         legend.position = "right",
                          legend.key.size = unit(2, 'cm'),
                          legend.title = element_text(size=26),
                          legend.text = element_text(size=22),
@@ -235,6 +243,31 @@ infra.4<-ggplot(filter(core.2, value!=0), aes(x = HubID, y = Var2)) +
                                  legend.text = element_text(size=22),
                                  strip.text.x = element_text(size = 20))
 
+core.2$pm<-ifelse(core.2$value==0, "#FFFFFF", core.2$Scale_Color)
+
+infra.5<-ggplot(core.2, aes(x = HubID, y = Var2)) + 
+  geom_raster(aes(fill=pm)) + 
+  geom_hline(yintercept = c(0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5), size = 1)+
+  geom_vline(xintercept = c(0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5), size = 1)+
+  facet_wrap(~ leg, scale="free_x")+
+  scale_fill_identity()+
+  labs(x="Food Hubs", y="Infrastructure", title="Food Hub Infrastructure",
+       subtitle = "Color Indicates Farm Source Mixture")+
+  theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
+                   axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
+                   axis.title.y=element_text(size = 26, face = "bold"),
+                   axis.text.y=element_text(size=26),
+                   plot.title=element_text(size=28, face="bold"),
+                   plot.subtitle = element_text(size = 20),
+                   axis.line = element_blank(),
+                   panel.grid = element_blank(),
+                   legend.position = "bottom",
+                   legend.key.size = unit(2, 'cm'),
+                   legend.title = element_text(size=26),
+                   legend.text = element_text(size=22),
+                   strip.text.x = element_text(size = 20))
+
+
 #Where do you sale and where do you get?
 
 core.3<-core %>%
@@ -251,9 +284,9 @@ core.3<-core %>%
 farms<-ggplot(data= filter(core.3, Case=="Small" | Case=="Medium" | Case=="Large"), aes(x=HubID, y=Value, fill=Case)) +
           geom_bar(position="stack", stat="identity") +
           facet_wrap(~ leg, scale="free_x") +
-          scale_fill_manual(values=c("#CC6666", "#9999CC", "#66CC99"))+
+          scale_fill_manual(values=c("#6666FF", "#FFFFCC", "#FF6666"))+
           labs(x="Food Hubs", y="Shares", title="From Where Do We Get?",
-               fill="Farms")+
+               fill="Farm Size")+
           theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
                            axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
                            axis.title.y=element_text(size = 26, face = "bold"),
@@ -303,7 +336,7 @@ mission.1<-ggplot(data=core.4)+
   geom_abline(intercept = 0, slope = 1,
               linetype="dashed", size = 1) +
   scale_colour_discrete(guide = "none") +
-  labs(title="Survey vs. Published Mission Focus", x="Survey Average", y="Published Ranking",
+  labs(title="Survey vs. Published Mission Focus: Economic", x="Survey Average", y="Published Ranking",
        shape="Legal Status")+
   theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
                    axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
@@ -320,26 +353,198 @@ mission.1<-ggplot(data=core.4)+
                    aspect.ratio = 1)
 
 
-mission.2<-ggplot(data=core)+
-  geom_point(aes(x=Social, y=Stated_Social, shape=leg, color=HubID), size=5,
-             position = position_jitter(h=0.05, w=0.05), alpha = 0.5)+
-  expand_limits(x=c(0,3), y=c(0,3))+
+mission.2<-ggplot(data=core.4)+
+  geom_point(aes(x=Social, y=Stated_Social, shape=leg, color=HubID), size=10,
+             position = position_jitter(h=0.05, w=0.05), alpha = .5)+
+  xlim(0,3.25) +
+  ylim(0,3.25) +
   geom_abline(intercept = 0, slope = 1,
               linetype="dashed", size = 1) +
   scale_colour_discrete(guide = "none") +
-  labs(title="Stated vs. Implied Missions", x="Implied Social", y="Stated Social",
+  labs(title="Survey vs. Published Mission Focus: Social", x="Survey Average", y="Published Ranking",
        shape="Legal Status")+
-  theme_bw()+theme(axis.line = element_blank(),
-                   legend.position = "bottom")
+  theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
+                   axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
+                   axis.title.y=element_text(size = 26, face = "bold"),
+                   axis.text.y=element_text(size=26),
+                   plot.title=element_text(size=28, face="bold"),
+                   axis.line = element_blank(),
+                   panel.grid = element_blank(),
+                   legend.position = "bottom",
+                   legend.key.size = unit(2, 'cm'),
+                   legend.title = element_text(size=26),
+                   legend.text = element_text(size=22),
+                   strip.text.x = element_text(size = 20),
+                   aspect.ratio = 1)
 
-mission.3<-ggplot(data=core)+
-  geom_point(aes(x = Enviro, y = Stated_Environment, shape = leg, color = HubID), size = 5,
-             position = position_jitter(h=0.05, w=0.05), alpha = 0.5)+
-  expand_limits(x=c(0,3), y=c(0,3))+
+mission.3<-ggplot(data=core.4)+
+  geom_point(aes(x = Environmental, y = Stated_Environment, shape = leg, color = HubID), size = 10,
+             position = position_jitter(h=0.05, w=0.05), alpha = .5)+
+  xlim(0,3.25) +
+  ylim(0,3.25) +
   geom_abline(intercept = 0, slope = 1,
               linetype="dashed", size = 1) +
   scale_colour_discrete(guide = "none") +
-  labs(title="Stated vs. Implied Missions", x="Implied Environmental", y="Stated Environmental",
+  labs(title="Survey vs. Published Mission Focus: Environmental", x="Survey Average", y="Published Ranking",
        shape="Legal Status")+
-  theme_bw()+theme(axis.line = element_blank(),
-                   legend.position = "bottom")
+  theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
+                   axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
+                   axis.title.y=element_text(size = 26, face = "bold"),
+                   axis.text.y=element_text(size=26),
+                   plot.title=element_text(size=28, face="bold"),
+                   axis.line = element_blank(),
+                   panel.grid = element_blank(),
+                   legend.position = "bottom",
+                   legend.key.size = unit(2, 'cm'),
+                   legend.title = element_text(size=26),
+                   legend.text = element_text(size=22),
+                   strip.text.x = element_text(size = 20),
+                   aspect.ratio = 1)
+
+mission.4<-ggplot(data=core.4)+
+  geom_point(aes(x=Economic, y=Stated_Economic, shape = leg, color = Scale_Color), size = 10,
+             position = position_jitter(h=0.05, w=0.05), alpha = .5)+
+  xlim(0,3.25) +
+  ylim(0,3.25) +
+  geom_abline(intercept = 0, slope = 1,
+              linetype="dashed", size = 1) +
+  scale_colour_identity(guide = "none") +
+  labs(title="Survey vs. Published Mission Focus: Economic", x="Survey Average", y="Published Ranking",
+       shape="Legal Status", subtitle = "Color Indicates Farm Size Mixture")+
+  theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
+                   axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
+                   axis.title.y=element_text(size = 26, face = "bold"),
+                   axis.text.y=element_text(size=26),
+                   plot.title=element_text(size=28, face="bold"),
+                   axis.line = element_blank(),
+                   panel.grid = element_blank(),
+                   legend.position = "bottom",
+                   legend.key.size = unit(2, 'cm'),
+                   legend.title = element_text(size=26),
+                   plot.subtitle = element_text(size=20),
+                   legend.text = element_text(size=22),
+                   strip.text.x = element_text(size = 20),
+                   aspect.ratio = 1)
+
+
+mission.5<-ggplot(data=core.4)+
+  geom_point(aes(x=Social, y=Stated_Social, shape=leg, color=Scale_Color), size=10,
+             position = position_jitter(h=0.05, w=0.05), alpha = .5)+
+  xlim(0,3.25) +
+  ylim(0,3.25) +
+  geom_abline(intercept = 0, slope = 1,
+              linetype="dashed", size = 1) +
+  scale_colour_identity(guide = "none") +
+  labs(title="Survey vs. Published Mission Focus: Social", x="Survey Average", y="Published Ranking",
+       shape="Legal Status", subtitle = "Color Indicates Farm Size Mixture")+
+  theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
+                   axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
+                   axis.title.y=element_text(size = 26, face = "bold"),
+                   axis.text.y=element_text(size=26),
+                   plot.title=element_text(size=28, face="bold"),
+                   axis.line = element_blank(),
+                   panel.grid = element_blank(),
+                   legend.position = "bottom",
+                   legend.key.size = unit(2, 'cm'),
+                   legend.title = element_text(size=26),
+                   legend.text = element_text(size=22),
+                   strip.text.x = element_text(size = 20),
+                   aspect.ratio = 1)
+
+mission.6<-ggplot(data=core.4)+
+  geom_point(aes(x = Environmental, y = Stated_Environment, shape = leg, color = Scale_Color), size = 10,
+             position = position_jitter(h=0.05, w=0.05), alpha = .5)+
+  xlim(0,3.25) +
+  ylim(0,3.25) +
+  geom_abline(intercept = 0, slope = 1,
+              linetype="dashed", size = 1) +
+  scale_color_identity(guide = "none") +
+  labs(title="Survey vs. Published Mission Focus: Environmental", x="Survey Average", y="Published Ranking",
+       shape="Legal Status", subtitle = "Color Indicates Farm Size Mixture")+
+  theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
+                   axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
+                   axis.title.y=element_text(size = 26, face = "bold"),
+                   axis.text.y=element_text(size=26),
+                   plot.title=element_text(size=28, face="bold"),
+                   axis.line = element_blank(),
+                   panel.grid = element_blank(),
+                   legend.position = "bottom",
+                   legend.key.size = unit(2, 'cm'),
+                   legend.title = element_text(size=26),
+                   legend.text = element_text(size=22),
+                   strip.text.x = element_text(size = 20),
+                   aspect.ratio = 1)
+
+
+mission.7<-ggplot(data=core.4)+
+  geom_point(aes(x=Economic, y=Stated_Economic, shape = leg, color = Product_Mix), size = 10,
+             position = position_jitter(h=0.05, w=0.05), alpha = .5)+
+  xlim(0,3.25) +
+  ylim(0,3.25) +
+  geom_abline(intercept = 0, slope = 1,
+              linetype="dashed", size = 1) +
+  scale_colour_discrete(guide = "legend") +
+  labs(title="Survey vs. Published Mission Focus: Economic", x="Survey Average", y="Published Ranking",
+       shape="Legal Status", color = "Product Mix")+
+  theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
+                   axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
+                   axis.title.y=element_text(size = 26, face = "bold"),
+                   axis.text.y=element_text(size=26),
+                   plot.title=element_text(size=28, face="bold"),
+                   axis.line = element_blank(),
+                   panel.grid = element_blank(),
+                   legend.position = "right",
+                   legend.key.size = unit(2, 'cm'),
+                   legend.title = element_text(size=26),
+                   legend.text = element_text(size=22),
+                   strip.text.x = element_text(size = 20),
+                   aspect.ratio = 1)
+
+mission.8<-ggplot(data=core.4)+
+  geom_point(aes(x=Social, y=Stated_Social, shape=leg, color = Product_Mix), size=10,
+             position = position_jitter(h=0.05, w=0.05), alpha = .5)+
+  xlim(0,3.25) +
+  ylim(0,3.25) +
+  geom_abline(intercept = 0, slope = 1,
+              linetype="dashed", size = 1) +
+  scale_colour_discrete() +
+  labs(title="Survey vs. Published Mission Focus: Social", x="Survey Average", y="Published Ranking",
+       shape="Legal Status", color = "Product Mix")+
+  theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
+                   axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
+                   axis.title.y=element_text(size = 26, face = "bold"),
+                   axis.text.y=element_text(size=26),
+                   plot.title=element_text(size=28, face="bold"),
+                   axis.line = element_blank(),
+                   panel.grid = element_blank(),
+                   legend.position = "right",
+                   legend.key.size = unit(2, 'cm'),
+                   legend.title = element_text(size=26),
+                   legend.text = element_text(size=22),
+                   strip.text.x = element_text(size = 20),
+                   aspect.ratio = 1)
+
+mission.9<-ggplot(data=core.4)+
+  geom_point(aes(x = Environmental, y = Stated_Environment, shape = leg, color = Product_Mix), size = 10,
+             position = position_jitter(h=0.05, w=0.05), alpha = .5)+
+  xlim(0,3.25) +
+  ylim(0,3.25) +
+  geom_abline(intercept = 0, slope = 1,
+              linetype="dashed", size = 1) +
+  scale_color_discrete() +
+  labs(title="Survey vs. Published Mission Focus: Environmental", x="Survey Average", y="Published Ranking",
+       shape="Legal Status", color = "Product Mix")+
+  theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
+                   axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
+                   axis.title.y=element_text(size = 26, face = "bold"),
+                   axis.text.y=element_text(size=26),
+                   plot.title=element_text(size=28, face="bold"),
+                   axis.line = element_blank(),
+                   panel.grid = element_blank(),
+                   legend.position = "right",
+                   legend.key.size = unit(2, 'cm'),
+                   legend.title = element_text(size=26),
+                   legend.text = element_text(size=22),
+                   strip.text.x = element_text(size = 20),
+                   aspect.ratio = 1)
+
