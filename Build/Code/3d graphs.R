@@ -60,3 +60,10 @@ plot3d(pdata$Global_Economic, pdata$Global_Social, pdata$Global_Environment, col
        xlim = c(0, 3.25), ylim = c(0, 3.25), zlim = c(0, 3.25), type="s",
        radius = pdata$pm_size)
 
+
+
+ 
+  # add_row(HubID = "FHI", x=50, y=50, LegStat=NA, Scale_Color=NA, Warehouse=1, Business_Model = "Mostly DtC")
+
+  
+  
