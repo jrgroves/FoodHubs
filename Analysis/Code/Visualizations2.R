@@ -7,6 +7,8 @@ rm(list=ls())
 suppressPackageStartupMessages(library(tidyverse))
 library(readxl)
 library(reshape2)
+library(scatterplot3d)
+library(rgl)
 
 
 #Read in Data####
@@ -387,6 +389,7 @@ mission.3<-ggplot(data=core.4)+
   scale_colour_discrete(guide = "none") +
   labs(title="Survey vs. Published Mission Focus: Environmental", x="Survey Average", y="Published Ranking",
        shape="Legal Status")+
+<<<<<<< HEAD
   theme_bw()+theme(axis.text.x=element_text(size=22, angle=0, vjust=0.3),
                    axis.title.x=element_text(size = 26, face = "bold", vjust=-0.75),
                    axis.title.y=element_text(size = 26, face = "bold"),
@@ -548,3 +551,64 @@ mission.9<-ggplot(data=core.4)+
                    strip.text.x = element_text(size = 20),
                    aspect.ratio = 1)
 
+=======
+<<<<<<< HEAD
+  theme_bw()
+
+core <- core %>%
+  mutate(leg=case_when(LegStat == "coop" ~ 1,
+                       LegStat == "corp" ~ 2,
+                       LegStat == "nonprofit" ~ 3))
+library(viridis)
+
+infra.1<-ggplot(data=core, aes(x=reorder(HubID, leg) , y=Sup_Per), fill=LegStat)+
+  geom_bar(stat = "identity", position = "dodge")+
+  scale_fill_viridis(discrete=TRUE, name="") 
+
+infra.1<-ggplot(data=core, aes(x=LegStat , y=Sup_Per), fill=LegStat)+
+  geom_bar(stat = "identity", position = "dodge")+
+  scale_fill_viridis(discrete=TRUE, name="") 
+
+  geom_vline(aes(xintercept = 8.5))+
+  geom_vline(aes(xintercept = 3.5))
+
+infra.2<-ggplot(data=subset(core, LegStat=="coop"), aes(x=HubID))+
+  geom_bar(stat = "count") +
+  geom_bar(aes(y=Trucks), stat = "bin") 
+
+
+
+
+
+
+
+
+
+
+#Splits the hubs dataframe into dfs by type
+focus<-core %>%
+  group_by(LegStat, .add=TRUE) %>%
+  group_split()
+
+source("./Build/Code/jradar.R")
+
+f.coop <- focus[[1]] %>%
+  select(HubID, Warehouse:Shared_Kitchen)
+
+ggradar(f.coop)
+  
+f.fp <- focus[[2]] %>%
+  select(HubID, Warehouse:Shared_Kitchen)
+
+ggradar(f.fp)
+
+f.nfp <- focus[[3]] %>%
+  select(HubID, Warehouse:Shared_Kitchen)
+ggradar(f.nfp)
+
+
+=======
+  theme_bw()+theme(axis.line = element_blank(),
+                   legend.position = "bottom")
+>>>>>>> 50272f8abdf864d165546e04cdb4d7fd74dcea07
+>>>>>>> b0c3bb0caf4bfa48ec2def1bad76a1aca34f0197
