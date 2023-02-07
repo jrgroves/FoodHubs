@@ -18,6 +18,7 @@ clock <- function(x, y, a, b, c){
 
 #This creates the points for the circles based on the number of food hubs in the data. Currently this is fixed
 
+<<<<<<< HEAD
   i<-(length(x)*100)-50
   j<-(length(y)*100)-50
   
@@ -38,10 +39,27 @@ rm(i, j)
   y = seq(0,j,100),
   xend = rep(i,length(y)+1), 
   yend = seq(0,j,100)
+=======
+i<-length(x)
+  
+  circles<-data.frame(
+  xcor = rep(seq(50,750,100), length(y)),
+  ycor = rep(seq(50,450,100), length(x)),
+  rad = 40
+)
+
+#This creates the divisions for the y-axis based on the number of categories in the variable on the y-axis
+hlines<-data.frame(
+  x = rep(0, length(levels(y))), #start at zero and the last element is the number of categories plus one.
+  y = seq(0,500,100),
+  xend = rep(800,6), 
+  yend = seq(0,500,100)
+>>>>>>> 07fa670f187bcbb84e395e906f2a3cdb8c6b1c5a
 )
 
 #This creates the divisions for the x-axis based on the number of categories in the variable on the x-axis.
 vlines<-data.frame(
+<<<<<<< HEAD
   x = seq(0,i,100),
   y = rep(0,length(x)+1),
   xend = seq(0,i,100),
@@ -82,6 +100,28 @@ base<-ggplot(d1) +
              data=d2[which(d2$Warehouse==1 & d2$DtC == 1),]) 
 
 
+=======
+  x = seq(0,800,100),
+  y = rep(0,9),
+  xend = seq(0,800,100),
+  yend = rep(500,9)
+)
+
+
+ggplot(gdata) +
+  scale_x_continuous(breaks = c(50, 150, 250, 350, 450, 550, 650, 750), 
+                     labels=c("Warehous","Office", "Trucks", "Online Systems", "Retail",
+                              "Shared Kitchen", "Processing", "None"), limits=c(0,800)) +
+  scale_y_continuous(breaks = c(50, 150, 250, 350, 450), 
+                     labels = c("Direct to Consumer", "Mostly DtC", "Hybrid", "Mostly Wholesale", "Wholesale"), 
+                     limits=c(0, 500))+
+  scale_colour_manual(
+    values = c("full-spectrum" = "red","narrow" = "blue","variety" = "green", "unknown" = "gray", "specialized" = "navy"),
+    name = "Product Mix")+
+  
+  geom_point(aes(x=x, y=y, shape=LegStat, colour=Product_Mix), size=4, 
+             data=gdata[which(gdata$Warehouse==1 & gdata$Business_Model == "DtC"),]) +
+>>>>>>> 07fa670f187bcbb84e395e906f2a3cdb8c6b1c5a
   geom_point(aes(x=x, y=y+100, shape=LegStat, colour=Product_Mix), size=4, 
              data=gdata[which(gdata$Warehouse==1 & gdata$Business_Model == "Mostly DtC"),])+
   geom_point(aes(x=x, y=y+200, shape=LegStat, colour=Product_Mix), size=4, 
@@ -168,8 +208,11 @@ base<-ggplot(d1) +
   geom_point(aes(x=x+700, y=y+400, shape=LegStat, colour=Product_Mix), size=4, 
              data=gdata[which(gdata$None==1 & gdata$Business_Model == "Wholesale"),])+
   #Visuals
+<<<<<<< HEAD
   
   ggplot()+
+=======
+>>>>>>> 07fa670f187bcbb84e395e906f2a3cdb8c6b1c5a
   geom_segment(aes(x=x, xend=xend, y=y, yend=yend), data=hlines)+
   geom_segment(aes(x=x, xend=xend, y=y, yend=yend), data=vlines)+
   theme(panel.border = element_blank(),
@@ -179,7 +222,14 @@ base<-ggplot(d1) +
         axis.ticks = element_blank(),
         axis.text.y = element_text(face="bold",size=9, angle=0),
         axis.text.x = element_text(face="bold",size=9, angle=90)) +
+<<<<<<< HEAD
   geom_circle(aes(x0 = xcor, y0=ycor, r = rad), colour = "gray", linetype="dotted", data=circles,  inherit.aes=FALSE) +
   xlab("Infrastructure")+
   ylab("Business Model")+
   guides(shape = guide_legend(title="Legal Status"))
+=======
+  geom_circle(aes(x0 = x, y0=y, r = r), colour = "gray", linetype="dotted", data=circles,  inherit.aes=FALSE) +
+  xlab("Infrastructure")+
+  ylab("Business Model")+
+  guides(shape = guide_legend(title="Legal Status"))
+>>>>>>> 07fa670f187bcbb84e395e906f2a3cdb8c6b1c5a
