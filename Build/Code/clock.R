@@ -1,5 +1,5 @@
 
-clock <- function(x, y, col, shp, sz, df){
+clock <- function(x, y, col, shp, sz=4, data){
   #X indicates the x-axis variable data frame
   #y indicates the y-axis variable
   #col indicates the color variable
@@ -40,9 +40,11 @@ clock <- function(x, y, col, shp, sz, df){
 #####
   
 #Creates the data
-  vars<-c(col, shp, sz) 
+  ifelse(sz==4,
+    vars<-c(col, shp) ,
+    vars<-c(col, shp, sz))
   
-  temp<-df %>%
+  temp<-data %>%
     select(all_of(vars), a) %>%
     bind_cols(x, y)
   
@@ -70,13 +72,13 @@ base<-ggplot(main) +
         axis.text.y = element_text(face="bold",size=9, angle=0),
         axis.text.x = element_text(face="bold",size=9, angle=90)) +
   geom_circle(aes(x0 = xcor, y0=ycor, r = rad), colour = "gray", linetype="dotted", data=circles,  inherit.aes=FALSE) +
-  xlab(sub("_", " ", deparse(substitute(x))))+
-  ylab(sub("_", " ", deparse(substitute(y))))+
+  xlab(gsub("_", " ", deparse(substitute(x)), fixed=TRUE))+
+  ylab(gsub("_", " ", deparse(substitute(y)), fixed=TRUE))+
   guides(shape = guide_legend(title=shp),
          size = "none")+
   scale_colour_manual(
     breaks = levels(factor(pull(main[,col]))),
-    values = colorRampPalette(c("red", "blue"))(length(levels(factor(pull(main[,col]))))),
+    values = colorRampPalette(c("cyan", "red"))(length(levels(factor(pull(main[,col]))))),
     name = gsub("_"," ", col)) +
   labs(caption = paste0("Size based on ", sz))
 
@@ -102,10 +104,15 @@ base<-ggplot(main) +
     }
 
 
-base <- base+
-      geom_point(data=out, aes(x = xc, y = yc, colour = factor(pull(out[,col])),
-                               shape = factor(pull(out[,shp])),
-                               size = factor(pull(out[,sz]))))
+ifelse(sz == 4,
+       base <- base+
+         geom_point(data=out, aes(x = xc, y = yc, colour = factor(pull(out[,col])),
+                                  shape = factor(pull(out[,shp])),
+                                  size = 4)) ,
+       base <- base+
+         geom_point(data=out, aes(x = xc, y = yc, colour = factor(pull(out[,col])),
+                                  shape = factor(pull(out[,shp])),
+                                  size = factor(pull(out[,sz])))) )
 
 return(base)
 
