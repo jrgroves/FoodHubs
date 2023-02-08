@@ -8,19 +8,21 @@ rm(list=ls())
 library(ggforce)
 library(tidyverse)
 library(readxl)
+library(graphics)
 
 core<-read_excel("./Data/master.xlsx", sheet = "export")
 
 
 gdata<-core %>%
-  select(HubID, a, LegStat, Scale_Color, Business_Model,  Warehouse, Office,
-         Trucks, Online_System, Retail, Processing, Shared_Kitchen, Product_Mix) %>%
+  select(HubID, a, LegStat, Business_Model, Product_Mix) %>%
   mutate(x = 50+(40*(cos(a*(pi/180)))),
          y = 50+(40*(sin(a*(pi/180)))),
-         Product_Mix = as.factor(Product_Mix),
-         sum = rowSums(across(Warehouse:Shared_Kitchen)),
-         None = case_when(sum == 0 ~ 1,
-                          TRUE ~ 0))
+         Product_Mix = as.factor(Product_Mix))
+
+
+
+
+
 
 circles<-data.frame(
   x = rep(seq(50,750,100), 5),
@@ -55,10 +57,7 @@ ggplot(gdata) +
     name = "Product Mix")+
 
   geom_point(aes(x=x, y=y, shape=LegStat, colour=Product_Mix), size=4, 
-             data=gdata[which(gdata$Warehouse==1 & gdata$Business_Model == "DtC"),]) 
-
-
-+
+             data=gdata[which(gdata$Warehouse==1 & gdata$Business_Model == "DtC"),]) +
   geom_point(aes(x=x, y=y+100, shape=LegStat, colour=Product_Mix), size=4, 
              data=gdata[which(gdata$Warehouse==1 & gdata$Business_Model == "Mostly DtC"),])+
   geom_point(aes(x=x, y=y+200, shape=LegStat, colour=Product_Mix), size=4, 

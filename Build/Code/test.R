@@ -5,6 +5,12 @@ y<- gdata %>%
 
 names(y)<-gsub("Business_Model","",names(y))
 
+x <- gdata %>%
+  select(Warehouse, Office, Trucks, Online_System, Retail, Processing, Shared_Kitchen, None)
+
+core<-gdata %>%
+  select(HubID, LegStat, Product_Mix,x, y)
+
 
 ggplot() +
   scale_x_continuous(breaks = seq(50, (length(x)*100)-50, 100), 
