@@ -1,5 +1,5 @@
 
-clock <- function(x, y, col, shp, sz=4, data){
+clock2 <- function(x, y, col, col2, shp, sz=4, data){
   #X indicates the x-axis variable data frame
   #y indicates the y-axis variable
   #col indicates the color variable
@@ -41,8 +41,8 @@ clock <- function(x, y, col, shp, sz=4, data){
   
 #Creates the data
   ifelse(sz==4,
-    vars<-c(col, shp) ,
-    vars<-c(col, shp, sz))
+    vars<-c(col, col2, shp), 
+    vars<-c(col, col2, shp, sz) )
   
   temp<-data %>%
     select(all_of(vars), a) %>%
@@ -70,18 +70,20 @@ base<-ggplot(main) +
         panel.background = element_blank(), 
         axis.ticks = element_blank(),
         axis.text.y = element_text(face="bold",size=9, angle=0),
-        axis.text.x = element_text(face="bold",size=9, angle=90)) +
+        axis.text.x = element_text(face="bold",size=9, angle=90))+
   geom_circle(aes(x0 = xcor, y0=ycor, r = rad), colour = "gray", linetype="dotted", data=circles,  inherit.aes=FALSE) +
-  xlab(gsub("_", " ", deparse(substitute(x)), fixed=TRUE))+
-  ylab(gsub("_", " ", deparse(substitute(y)), fixed=TRUE))+
-  guides(shape = guide_legend(title=shp, override.aes = list(size = 7)),
+  xlab(gsub("_", " ", deparse(substitute(x))))+
+  ylab(gsub("_", " ", deparse(substitute(y))))+
+  guides(shape = guide_legend(title=shp, override.aes = list(size = 5)),
          size = "none",
-         colour = guide_legend(override.aes = list(size=7)))+
+         colour = guide_legend(override.aes = list(size=5)))+
   scale_colour_manual(
-    breaks = levels(factor(pull(main[,col]))),
+    #breaks = levels(factor(pull(main[,col]))),
+    #values = pull(main[,col]),
     values = colorRampPalette(c("cyan", "red"))(length(levels(factor(pull(main[,col]))))),
-    name = gsub("_"," ", col)) +
-  labs(caption = paste0("Size based on ", sz))
+    labels = unique(pull(main[,col2])),
+    name = "Mission Mix") +
+  labs(caption = paste0("Size based on ", gsub("_", " ", sz)))
 
     for(j in seq(1, length(x))){
     
@@ -104,16 +106,15 @@ base<-ggplot(main) +
       
     }
 
-
 ifelse(sz == 4,
-       base <- base+
-         geom_point(data=out, aes(x = xc, y = yc, colour = factor(pull(out[,col])),
-                                  shape = factor(pull(out[,shp])),
-                                  size = 4)) ,
-       base <- base+
-         geom_point(data=out, aes(x = xc, y = yc, colour = factor(pull(out[,col])),
-                                  shape = factor(pull(out[,shp])),
-                                  size = factor(pull(out[,sz])))) )
+    base <- base+
+      geom_point(data=out, aes(x = xc, y = yc, colour = factor(pull(out[,col])),
+                               shape = factor(pull(out[,shp])),
+                               size = 4)) ,
+    base <- base+
+      geom_point(data=out, aes(x = xc, y = yc, colour = factor(pull(out[,col])),
+                               shape = factor(pull(out[,shp])),
+                               size = factor(pull(out[,sz])))) )
 
 return(base)
 
