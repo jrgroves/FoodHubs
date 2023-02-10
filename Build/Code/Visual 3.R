@@ -24,7 +24,7 @@ Business_Model<-core %>%
   rename_with(.,~ gsub("Business_Model", "", .x))%>%
   rename_with(.,~ gsub(" ", "_", .x))%>%
   rename_with(.,~ gsub("NA", "Unkwn", .x)) %>%
-  select(., 1, 3, 2, 4, 6, 5)
+  select(., 1, 3, 2, 4, 5)
 
 Prod_Mix<-core %>%
   mutate(as.data.frame(model.matrix(~ 0 + Product_Mix, data=core))) %>%
@@ -141,7 +141,9 @@ gdata<-core %>%
          Miss.Color = rgb(cyan, magin, yell, maxColorValue = 255),
          Miss.Def = paste0(Global_Social, ": Soc; ", 
                            Global_Economic, ": Econ; ",
-                           Global_Environment, ": Env")) %>%
+                           Global_Environment, ": Env"),
+         Business_Model = factor(Business_Model, 
+                                 levels = c("DtC", "Mostly DtC", "Hybrid", "Mostly Wholesale", "Wholesale"))) %>%
   rename(Total_Revenue_Scaled=size_scale_rev)
 
 
